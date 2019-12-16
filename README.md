@@ -11,10 +11,12 @@ In an embedded project this could just be removed.
 None
 
 # Compiling and Running
+```
 git clone https://github.com/King-Swood/DummyMenu
 cd ./DummyMenu
 make
 cd ./build && ./a.out && cd ..
+```
 
 # Instructions
 Once the program is running, the "WASD" keys can be used to navigate the menu.
