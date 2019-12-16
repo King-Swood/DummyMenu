@@ -4,10 +4,10 @@ typedef struct sMenu tMenu;
 typedef struct sMenuItem tMenuItem;
 
 typedef struct sMenuInfo {
-	const tMenu *menu;
-	const tMenuItem *item;
-	void *data;
-	int index;
+    const tMenu *menu;
+    const tMenuItem *item;
+    void *data;
+    int index;
 }tMenuInfo;
 
 // The actual menu item.
@@ -58,12 +58,12 @@ extern "C"
 {
 #endif
 
-// Place this function in the "onExecute" callback, and the address of the target menu in the data pointer,
-// to navigate to a submenu.
-void MenuOnExecuteSubMenu();
+    // Place this function in the "onExecute" callback, and the address of the target menu in the data pointer,
+    // to navigate to a submenu.
+    void MenuOnExecuteSubMenu();
 
-void MenuInit(tCurrentMenu *currentMenu, tMenu *menu);
-void MenuUpdate(tCurrentMenu *currentMenu, eButton buttonPress);
+    void MenuInit(tCurrentMenu *currentMenu, tMenu *menu);
+    void MenuUpdate(tCurrentMenu *currentMenu, eButton buttonPress);
 
 #ifdef __cplusplus
 }

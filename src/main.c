@@ -5,9 +5,11 @@
 #include <time.h>
 #include "menu.h"
 
+const char* VersionString = "0.0.1";
+
 void InputsInputOnDraw(const tMenuInfo *info)
 {
-	printf("Input %d", info->index+1);
+    printf("Input %d", info->index+1);
 }
 
 #define MENU_INPUTS_COUNT (8)
@@ -50,26 +52,32 @@ tMenu menuDiagnostics = {
 
 void MenuMainDateOnDraw(const tMenuInfo *info)
 {
-	time_t rawTime;
-	time(&rawTime);
-	char tempString[50];
-	strftime(tempString, 50, "%F", localtime(&rawTime));
-	printf("%s", tempString);
+    time_t rawTime;
+    time(&rawTime);
+    char tempString[50];
+    strftime(tempString, 50, "%F", localtime(&rawTime));
+    printf("%s", tempString);
 }
 
 void MenuMainTimeOnDraw(const tMenuInfo *info)
 {
-	time_t rawTime;
-	time(&rawTime);
-	char tempString[50];
-	strftime(tempString, 50, "%T", localtime(&rawTime));
-	printf("%s", tempString);
+    time_t rawTime;
+    time(&rawTime);
+    char tempString[50];
+    strftime(tempString, 50, "%T", localtime(&rawTime));
+    printf("%s", tempString);
+}
+
+void MenuMainVersionOnDraw(const tMenuInfo *info)
+{
+    printf("%s", VersionString);
 }
 
 const tMenuItem menuMainItems[] = {
     {"Date",  NULL, MenuMainDateOnDraw, NULL},
     {"Time",  NULL, MenuMainTimeOnDraw, NULL},
     {"Diagnostics",  MenuOnExecuteSubMenu, NULL, (void*)&menuDiagnostics},
+    {"Version", NULL, MenuMainVersionOnDraw, NULL},
     {NULL}
 };
 
@@ -82,18 +90,18 @@ tMenu menuMain = {
 
 void ClearScreen()
 {
-	printf("\033[H\033[J");
+    printf("\033[H\033[J");
 }
 
 int main()
 {
     // Modify terminal so we can read characters a single char at a time without having to press enter (unbuffered).
     system("stty -icanon min 0");
-    printf ("----- Darren's Dummy Menu -----\n\n");
+    printf ("----- Darren's Dummy Menu Version %s -----\n\n", VersionString);
 
     for (int i = 0; i < MENU_INPUTS_COUNT; ++i) {
-    	menuInputsItems[i].name = "";
-	menuInputsItems[i].onDraw = InputsInputOnDraw;
+        menuInputsItems[i].name = "";
+        menuInputsItems[i].onDraw = InputsInputOnDraw;
     }
     menuInputsItems[MENU_INPUTS_COUNT].name = NULL;
 
@@ -102,42 +110,42 @@ int main()
     ClearScreen();
     MenuUpdate(&currentMenu, eButtonNone);
 
-	bool quit = false;
-	ungetc('!', stdin);
+    bool quit = false;
+    ungetc('!', stdin);
     do {
         int inputChar = getchar();
-	eButton buttonPress = eButtonNone;
+        eButton buttonPress = eButtonNone;
         if (inputChar > 0) {
             switch ((char)inputChar) {
-            case 'w':
-                buttonPress = eButtonUp;
-                break;
-            case 's':
-                buttonPress = eButtonDown;
-                break;
-            case 'a':
-                buttonPress = eButtonLeft;
-                break;
-            case 'd':
-                buttonPress = eButtonRight;
-                break;
-	case 'q':
-		quit = true;
-		break;
-            default:
-                break;
+                case 'w':
+                    buttonPress = eButtonUp;
+                    break;
+                case 's':
+                    buttonPress = eButtonDown;
+                    break;
+                case 'a':
+                    buttonPress = eButtonLeft;
+                    break;
+                case 'd':
+                    buttonPress = eButtonRight;
+                    break;
+                case 'q':
+                    quit = true;
+                    break;
+                default:
+                    break;
             }
         }
-            
-            MenuUpdate(&currentMenu, buttonPress);
 
-            if (!currentMenu.menu) {
-                printf ("Exiting Menu\n");
-                break;
-            }
-	    else {
-		    usleep(100);
-	    }
+        MenuUpdate(&currentMenu, buttonPress);
+
+        if (!currentMenu.menu) {
+            printf ("Exiting Menu\n");
+            break;
+        }
+        else {
+            usleep(100);
+        }
     } while (!quit);
 
 
