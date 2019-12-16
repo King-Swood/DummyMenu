@@ -17,8 +17,8 @@ typedef struct sMenuInfo {
 // functions.
 typedef struct sMenuItem{
     const char *name;
-    void (*onExecute)(tMenuInfo *menuInfo);
-    void (*onDraw)(tMenuInfo *menuInfo);
+    void (*onExecute)(const tMenuInfo *menuInfo);
+    void (*onDraw)(const tMenuInfo *menuInfo);
     void *data;
 }tMenuItem;
 
