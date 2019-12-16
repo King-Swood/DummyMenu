@@ -1,55 +1,24 @@
+#include "menu.h"
 #include <stdio.h>
 
-typedef struct sMenu tMenu;
-
-// The actual menu item.
-// Holds the name of the item, and function pointers for when the item is displayed
-// and if the user selects the item.
-// The data pointer can point to any piece of data, and will be passed into the execute and draw
-// functions.
-typedef struct {
-    const char *name;
-    void (*onExecute)(void*);
-    void (*onDraw)(void*);
-    void *data;
-}tMenuItem;
-
-// The actual menu (or submenu).
-// Holds the name of the menu, and the array of menu items.
-// The index of the top level menu needs to be set to 0,
-// and the previous pointer to NULL.
-// Notice that the addition of the "previous" pointer makes our menu
-// act a bit like a linked list, so we can dynamically move up and down in
-// the menu structure.
-typedef struct sMenu{
-    const char *name;
-    const tMenuItem *items;
-    int index;
-    struct sMenu *previous;
-}tMenu;
-
-// Instead of having to pass a pointer-to-pointer into MenuDraw, we can pass a pointer
-// to tCurrentMenu, which makes it easier to think about.
-typedef struct {
-    tMenu *menu;
-}tCurrentMenu;
-
-// Place this function in the "onExecute" callback, and the address of the target menu in the data pointer,
-// to navigate to a submenu.
 void MenuOnExecuteSubMenu(){}
 
-// An enumeration for separating menu button presses from the actual key strokes used
-// to navigate the menu.
-typedef enum {
-    eButtonNone,
-    eButtonUp,
-    eButtonDown,
-    eButtonLeft,
-    eButtonRight,
-}eButton;
+static void ClearScreen()
+{
+	printf("\033[H\033[J");
+}
+
+
+void MenuInit(tCurrentMenu *currentMenu, tMenu *menu)
+{
+	menu->index = 0;
+	menu->previous = NULL;
+	currentMenu->menu = menu;
+	ClearScreen();
+}
 
 // Handles the drawing, navigating and updating of the menu.
-void MenuDraw(tCurrentMenu *currentMenu, eButton buttonPress)
+static void MenuNavigate(tCurrentMenu *currentMenu, eButton buttonPress)
 {
     // Make sure sensible values have been passed into the function.
     if (!currentMenu) {
@@ -98,31 +67,54 @@ void MenuDraw(tCurrentMenu *currentMenu, eButton buttonPress)
             }
         }
         else if (item->onExecute) {
-            item->onExecute(item->data);
+		tMenuInfo menuInfo = {
+			.menu = menu,
+			.item = item,
+			.data = item->data,
+			.index = menu->index
+		};
+	        item->onExecute(&menuInfo);
         }
         break;
     }
     default:
         break;
     }
-    
-    // Check to see if the user has exited the menu.
-    if (!currentMenu->menu) {
+}
+
+static void MenuDraw(const tMenu *menu)
+{
+    // Make sure sensible values have been passed into the function.
+    if (!menu) {
         return;
     }
 
-    menu = currentMenu->menu;
-
-    // Draw the menu.
     printf("%s\n", menu->name);
     int i = 0;
     while (menu->items[i].name != NULL) {
         const tMenuItem *item = &menu->items[i];
         printf("%s  %s ", (i == menu->index) ? "->" : "  ", item->name);
         if (item->onDraw) {
-            item->onDraw(item->data);
+		tMenuInfo menuInfo = {
+			.menu = menu,
+			.item = item,
+			.data = item->data,
+			.index = i
+		};
+	        item->onDraw(&menuInfo);
         }
         printf("\n");
         ++i;
     } 
+}
+
+
+void MenuUpdate(tCurrentMenu *currentMenu, eButton buttonPress)
+{
+	MenuNavigate(currentMenu, buttonPress);
+
+	ClearScreen();
+	if (currentMenu->menu) {
+		MenuDraw(currentMenu->menu);
+	}
 }

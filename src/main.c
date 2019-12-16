@@ -1,19 +1,22 @@
 #include <stdio.h>
+#include <stdbool.h>
+#include <stdlib.h>
+#include "menu.h"
 
-void MainDiagnosticsCounterOnExecute(void *data)
+void MainDiagnosticsCounterOnExecute(tMenuInfo *info)
 {
-    int *counter = (int*)data;
+    int *counter = (int*)info->data;
     ++*counter;
 }
 
-void MainDiagnosticsCounterOnDraw(void *data)
+void MainDiagnosticsCounterOnDraw(tMenuInfo *info)
 {
-    int *counter = (int*)data;
+    int *counter = (int*)info->data;
     printf("%d", *counter);
 }
-void MainDiagnosticsCounterExpOnExecute(void *data)
+void MainDiagnosticsCounterExpOnExecute(tMenuInfo *info)
 {
-    int *counter = (int*)data;
+    int *counter = (int*)info->data;
     *counter *= *counter;
 }
 
@@ -42,18 +45,28 @@ tMenu menuMain = {
     NULL
 };
 
+void ClearScreen()
+{
+	printf("\033[H\033[J");
+}
+
 int main()
 {
+    // Modify terminal so we can read characters a single char at a time without having to press enter (unbuffered).
+    system("stty cbreak");
     printf ("----- Darren's Dummy Menu -----\n\n");
-    char inputChar;
-    tCurrentMenu currentMenu = {&menuMain};
-    MenuDraw(&currentMenu, eButtonNone);
 
+    tCurrentMenu currentMenu;
+    MenuInit(&currentMenu, &menuMain);
+    ClearScreen();
+    MenuUpdate(&currentMenu, eButtonNone);
+
+	bool quit = false;
     do {
-        int result = scanf("%c", &inputChar);
-        if (result > 0) {
+        int inputChar = getchar();
+        if (inputChar > 0) {
             eButton buttonPress;
-            switch (inputChar) {
+            switch ((char)inputChar) {
             case 'w':
                 buttonPress = eButtonUp;
                 break;
@@ -66,24 +79,31 @@ int main()
             case 'd':
                 buttonPress = eButtonRight;
                 break;
+	case 'q':
+		quit = true;
+		break;
             default:
                 buttonPress = eButtonNone;
                 break;
             }
             
-            MenuDraw(&currentMenu, buttonPress);
+            MenuUpdate(&currentMenu, buttonPress);
 
             if (!currentMenu.menu) {
                 printf ("Exiting Menu\n");
                 break;
             }
         }
-        else if (result < 0) {
+        else if (inputChar < 0) {
             break;
         }
-    } while (inputChar != 'q');
+    } while (!quit);
 
 
     printf ("\nExiting Program\n");
+
+    // Return the terminal to its normal 'buffered' behaviour.
+    system("stty -cbreak");
+
     return 0;
 }
