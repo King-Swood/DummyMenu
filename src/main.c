@@ -5,7 +5,7 @@
 #include <time.h>
 #include "menu.h"
 
-const char* VersionString = "0.0.1";
+const char* VersionString = "0.1.0";
 
 void InputsInputOnDraw(const tMenuInfo *info)
 {
@@ -111,7 +111,6 @@ int main()
     MenuUpdate(&currentMenu, eButtonNone);
 
     bool quit = false;
-    ungetc('!', stdin);
     do {
         int inputChar = getchar();
         eButton buttonPress = eButtonNone;
