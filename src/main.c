@@ -88,26 +88,24 @@ tMenu menuMain = {
     NULL
 };
 
-void ClearScreen()
-{
-    printf("\033[H\033[J");
-}
-
 int main()
 {
     // Modify terminal so we can read characters a single char at a time without having to press enter (unbuffered).
     system("stty -icanon min 0");
     printf ("----- Darren's Dummy Menu Version %s -----\n\n", VersionString);
 
+    // Dynamically create the items for the Inputs menu.
     for (int i = 0; i < MENU_INPUTS_COUNT; ++i) {
         menuInputsItems[i].name = "";
         menuInputsItems[i].onDraw = InputsInputOnDraw;
     }
+    // Don't forget to add the final "NULL" item.
     menuInputsItems[MENU_INPUTS_COUNT].name = NULL;
 
+    // Initialise the menu with the top level menu.
     tCurrentMenu currentMenu;
     MenuInit(&currentMenu, &menuMain);
-    ClearScreen();
+    // Call update once so that it draws the first time.
     MenuUpdate(&currentMenu, eButtonNone);
 
     bool quit = false;
