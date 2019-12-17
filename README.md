@@ -20,5 +20,7 @@ cd ./build && ./a.out && cd ..
 
 # Instructions
 Once the program is running, the "WASD" keys can be used to navigate the menu.
+
 If 'a' is pressed on the top level menu, the program will exit.
+
 If 'q' is pressed at any time, the program will exit.
