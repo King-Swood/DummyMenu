@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <time.h>
 #include "menu.h"
+#include "key.h"
 
 const char* VersionString = "0.1.0";
 
@@ -90,8 +91,6 @@ tMenu menuMain = {
 
 int main()
 {
-    // Modify terminal so we can read characters a single char at a time without having to press enter (unbuffered).
-    system("stty -icanon min 0");
     printf ("----- Darren's Dummy Menu Version %s -----\n\n", VersionString);
 
     // Dynamically create the items for the Inputs menu.
@@ -109,8 +108,9 @@ int main()
     MenuUpdate(&currentMenu, eButtonNone);
 
     bool quit = false;
+	KeyStartScanMode();
     do {
-        int inputChar = getchar();
+        int inputChar = KeyGetChar();
         eButton buttonPress = eButtonNone;
         if (inputChar > 0) {
             switch ((char)inputChar) {
@@ -145,11 +145,8 @@ int main()
         }
     } while (!quit);
 
-
+	KeyStopScanMode();
     printf ("\nExiting Program\n");
-
-    // Return the terminal to its normal 'buffered' behaviour.
-    system("stty cooked");
 
     return 0;
 }
