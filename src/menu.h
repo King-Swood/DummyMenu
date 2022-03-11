@@ -70,7 +70,8 @@ extern "C"
         eMCC_ClearScreen,
         eMCC_FinishedDrawingItem,
         eMCC_DrawingSelectedItem,
-        eMCC_DrawingItem
+        eMCC_DrawingItem,
+        eMCC_CallingOnDraw
     }eMenuControlCode;
     extern void MenuControlCode(eMenuControlCode);
     // MenuDrawString needs to be defined somewhere in the calling code.
