@@ -104,6 +104,9 @@ void MenuControlCode(eMenuControlCode code)
     case eMCC_DrawingItem:
         printf("   ");
         break;
+    case eMCC_CallingOnDraw:
+        printf(" ");
+        break;
     }
 }
 

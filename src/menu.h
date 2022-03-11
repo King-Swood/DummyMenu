@@ -70,13 +70,13 @@ extern "C"
         eMCC_ClearScreen,
         eMCC_FinishedDrawingItem,
         eMCC_DrawingSelectedItem,
-        eMCC_DrawingItem
+        eMCC_DrawingItem,
+        eMCC_CallingOnDraw
     }eMenuControlCode;
     extern void MenuControlCode(eMenuControlCode);
+
     // MenuDrawString needs to be defined somewhere in the calling code.
     // It may be called multiple times to draw each line of the menu.
-    // A string containing only a newline character will be sent to indicate the end of a menu line.
-    // IE: "\n".
     extern void MenuDrawString(const char*);
 
 #ifdef __cplusplus
