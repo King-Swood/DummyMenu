@@ -6,7 +6,7 @@
 #include "menu.h"
 #include "key.h"
 
-const char* VersionString = "0.1.0";
+const char* VersionString = "0.2.0";
 
 void InputsInputOnDraw(const tMenuInfo *info)
 {
@@ -88,6 +88,29 @@ tMenu menuMain = {
     0,
     NULL
 };
+
+void MenuControlCode(eMenuControlCode code)
+{
+    switch (code) {
+    case eMCC_ClearScreen:
+        printf("\033[H\033[J");
+        break;
+    case eMCC_FinishedDrawingItem:
+        printf("\n");
+        break;
+    case eMCC_DrawingSelectedItem:
+        printf("-> ");
+        break;
+    case eMCC_DrawingItem:
+        printf("   ");
+        break;
+    }
+}
+
+void MenuDrawString(const char *str)
+{
+    printf("%s", str);
+}
 
 int main()
 {

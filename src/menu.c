@@ -1,12 +1,7 @@
 #include "menu.h"
-#include <stdio.h>
+#include "stddef.h"
 
 void MenuOnExecuteSubMenu(){}
-
-static void ClearScreen()
-{
-    printf("\033[H\033[J");
-}
 
 
 void MenuInit(tCurrentMenu *currentMenu, tMenu *menu)
@@ -14,7 +9,7 @@ void MenuInit(tCurrentMenu *currentMenu, tMenu *menu)
     menu->index = 0;
     menu->previous = NULL;
     currentMenu->menu = menu;
-    ClearScreen();
+    MenuControlCode(eMCC_ClearScreen);
 }
 
 // Handles the drawing, navigating and updating of the menu.
@@ -89,11 +84,22 @@ static void MenuDraw(const tMenu *menu)
         return;
     }
 
-    printf("%s\n", menu->name);
+    if (menu->name) {
+        MenuDrawString(menu->name);
+        MenuControlCode(eMCC_FinishedDrawingItem);
+    }
+
     int i = 0;
     while (menu->items[i].name != NULL) {
         const tMenuItem *item = &menu->items[i];
-        printf("%s  %s ", (i == menu->index) ? "->" : "  ", item->name);
+        if (i == menu->index) {
+            MenuControlCode(eMCC_DrawingSelectedItem);
+        }
+        else {
+            MenuControlCode(eMCC_DrawingItem);
+        }
+        MenuDrawString(item->name);
+
         if (item->onDraw) {
             tMenuInfo menuInfo = {
                 .menu = menu,
@@ -103,7 +109,8 @@ static void MenuDraw(const tMenu *menu)
             };
             item->onDraw(&menuInfo);
         }
-        printf("\n");
+
+        MenuControlCode(eMCC_FinishedDrawingItem);
         ++i;
     } 
 }
@@ -113,7 +120,7 @@ void MenuUpdate(tCurrentMenu *currentMenu, eButton buttonPress)
 {
     MenuNavigate(currentMenu, buttonPress);
 
-    ClearScreen();
+    MenuControlCode(eMCC_ClearScreen);
     if (currentMenu->menu) {
         MenuDraw(currentMenu->menu);
     }

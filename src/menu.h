@@ -30,7 +30,7 @@ typedef struct sMenuItem{
 // act a bit like a linked list, so we can dynamically move up and down in
 // the menu structure.
 typedef struct sMenu{
-    const char *name;
+    const char *name;   // Leave this NULL to skip drawing the menu name.
     const tMenuItem *items;
     int index;
     struct sMenu *previous;
@@ -64,6 +64,20 @@ extern "C"
 
     void MenuInit(tCurrentMenu *currentMenu, tMenu *menu);
     void MenuUpdate(tCurrentMenu *currentMenu, eButton buttonPress);
+
+    // MenuClearScreen needs to be defined somewhere in the calling code.
+    typedef enum {
+        eMCC_ClearScreen,
+        eMCC_FinishedDrawingItem,
+        eMCC_DrawingSelectedItem,
+        eMCC_DrawingItem
+    }eMenuControlCode;
+    extern void MenuControlCode(eMenuControlCode);
+    // MenuDrawString needs to be defined somewhere in the calling code.
+    // It may be called multiple times to draw each line of the menu.
+    // A string containing only a newline character will be sent to indicate the end of a menu line.
+    // IE: "\n".
+    extern void MenuDrawString(const char*);
 
 #ifdef __cplusplus
 }
