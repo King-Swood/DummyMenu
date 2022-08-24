@@ -102,7 +102,7 @@ static void MenuDraw(const tMenu *menu)
 
         if (item->onDraw) {
             MenuControlCode(eMCC_CallingOnDraw);
-            
+
             tMenuInfo menuInfo = {
                 .menu = menu,
                 .item = item,
